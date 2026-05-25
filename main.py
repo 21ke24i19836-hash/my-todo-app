@@ -15,7 +15,6 @@ while True:
 
     if user_action.startswith("add"):
         todo = input("Enter a todo: ") + "\n"
-
         todos = get_todos()
         todos.append(todo)
         write_todos(todos)
