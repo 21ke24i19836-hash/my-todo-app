@@ -2,7 +2,6 @@ import time
 import FreeSimpleGUI as sg
 import functions
 
-
 def create_window(theme):
     sg.theme(theme)
 
@@ -10,10 +9,12 @@ def create_window(theme):
     label = sg.Text("Type in a to-do")
     input_box = sg.InputText(tooltip="Enter todo", key="todo")
     add_button = sg.Button("Add")
-    list_box = sg.Listbox(values=functions.get_todos(),
-                          enable_events=True,
-                          key="todos",
-                          size=(45, 10))
+    list_box = sg.Listbox(
+        values=functions.get_todos(),
+        enable_events=True,
+        key="todos",
+        size=(45, 10)
+    )
     edit_button = sg.Button("Edit")
     complete_button = sg.Button("Complete")
     exit_button = sg.Button("Exit")
@@ -37,7 +38,6 @@ def create_window(theme):
 
     return sg.Window('My To-Do App', layout, font=('Helvetica', 20))
 
-
 window = create_window("DarkBlue3")
 
 while True:
@@ -51,7 +51,6 @@ while True:
     if event == "Add":
         todos = functions.get_todos()
         new_todo = values['todo'].strip()
-
         if new_todo:
             todos.append(new_todo + "\n")
             functions.write_todos(todos)
@@ -85,7 +84,6 @@ while True:
         try:
             todos.remove(todos_to_complete)
         except ValueError:
-            print("Selected item not found in list")
             continue
 
         functions.write_todos(todos)
@@ -102,7 +100,6 @@ while True:
             continue
 
         if not values["todo"].strip():
-            print("No new text entered")
             continue
 
         todos = functions.get_todos()
@@ -112,7 +109,6 @@ while True:
         try:
             index = todos.index(selected_item)
         except ValueError:
-            print("Selected item not found in file list")
             continue
 
         todos[index] = new_todo

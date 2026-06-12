@@ -1,40 +1,44 @@
 import streamlit as st
-import functions
+from functions import get_todos, write_todos
 
-todos = functions.get_todos()
+st.set_page_config(page_title="My To-Do App")
 
+st.title("My To-Do App")
+st.caption("Simple Streamlit-based todo list")
 
-def add_todo():
-    todo = st.session_state["new_todo"].strip()
-    if not todo:
-        return
-    todos = functions.get_todos()
-    todos.append(todo + "\n")
-    functions.write_todos(todos)
-    st.session_state["new_todo"] = ""
+# Load existing todos from file
+todos = get_todos()
 
+# Input for new todo
+new_todo = st.text_input("Add a new task:", placeholder="Type and press Add")
 
-st.title("My To do App")
-st.subheader("Your Todo list")
+# Button to add todo
+if st.button("Add"):
+    if new_todo.strip():
+        todos.append(new_todo.strip() + "\n")
+        write_todos(todos)
+        st.success("Todo added!")
+        st.rerun()  # restart script so updated list shows
+    else:
+        st.warning("Please type something before adding.")
 
-new_todos = []
-for i, todo in enumerate(todos):
-    checked = st.checkbox(todo.strip(), key=f"todo_{i}")
-    if not checked:
-        new_todos.append(todo)
+st.subheader("Your tasks")
 
-if new_todos != todos:
-    functions.write_todos(new_todos)
-    for i, todo in enumerate(todos):
-        if todo not in new_todos:
-            key = f"todo_{i}"
-            if key in st.session_state:
-                del st.session_state[key]
-    st.rerun()
+# Show todos with a "Done" button to remove them
+for index, todo in enumerate(todos):
+    col1, col2 = st.columns([0.8, 0.2])
 
-st.text_input(
-    label="",
-    placeholder="Enter your text here.....",
-    on_change=add_todo,
-    key="new_todo"
-)
+    with col1:
+        st.write(f"{index + 1}. {todo.strip()}")
+
+    with col2:
+        if st.button("Done", key=f"done_{index}"):
+            todos.pop(index)
+            write_todos(todos)
+            st.rerun()
+
+# Optional debug info – you can delete this section later
+with st.expander("Debug info"):
+    from functions import FILEPATH
+    st.write("Todos file path:", FILEPATH)
+    st.write("File exists:", FILEPATH.exists())
